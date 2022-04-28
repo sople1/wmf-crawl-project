@@ -19,7 +19,7 @@ services:
     networks:
       - crawlnet
   front:
-    build: front
+    build: docker/front
     # volumes:
     #   - "./:/"
     extra_hosts:
@@ -27,9 +27,9 @@ services:
     networks:
       - crawlnet
   api:
-    build: api
-    # volumes:
-    #   - "./:/"
+    build: docker/api
+    volumes:
+      - "./src/api/:/tmp/app/:"
     #   - "./php8/entrypoint.sh:/tmp/entrypoint.sh"
     extra_hosts:
       <<: *hosts-env
