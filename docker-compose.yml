@@ -11,9 +11,9 @@ services:
       - "443:443"
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
-      - "./was/nginx/conf.d/default.conf:/etc/nginx/conf.d/custom.conf"
-      - "./was/nginx/proxy.conf:/etc/nginx/proxy.conf"
-      - "./was/nginx/network_internal.conf:/etc/nginx/network_internal.conf"
+      - "./docker/was/nginx/conf.d/default.conf:/etc/nginx/conf.d/custom.conf"
+      - "./docker/was/nginx/proxy.conf:/etc/nginx/proxy.conf"
+      - "./docker/was/nginx/network_internal.conf:/etc/nginx/network_internal.conf"
     extra_hosts:
       <<: *hosts-env
     networks:
@@ -29,8 +29,8 @@ services:
   api:
     build: docker/api
     volumes:
-      - "./src/api/:/tmp/app/:"
-    #   - "./php8/entrypoint.sh:/tmp/entrypoint.sh"
+      - "./src/api/:/opt/app/:rw"
+      - "./docker/api/entrypoint.sh:/tmp/entrypoint.sh"
     extra_hosts:
       <<: *hosts-env
     networks:
