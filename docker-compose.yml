@@ -1,0 +1,50 @@
+version: '3.9'
+
+x-hosts-default: &hosts-env
+  host.docker.internal: host-gateway
+
+services:
+  was:
+    image: nginxproxy/nginx-proxy:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - "./was/nginx/conf.d/default.conf:/etc/nginx/conf.d/custom.conf"
+      - "./was/nginx/proxy.conf:/etc/nginx/proxy.conf"
+      - "./was/nginx/network_internal.conf:/etc/nginx/network_internal.conf"
+    extra_hosts:
+      <<: *hosts-env
+    networks:
+      - crawlnet
+  front:
+    build: front
+    # volumes:
+    #   - "./:/"
+    extra_hosts:
+      <<: *hosts-env
+    networks:
+      - crawlnet
+  api:
+    build: api
+    # volumes:
+    #   - "./:/"
+    #   - "./php8/entrypoint.sh:/tmp/entrypoint.sh"
+    extra_hosts:
+      <<: *hosts-env
+    networks:
+      - crawlnet
+    cap_add:
+      - ALL
+  redis:
+    image: redis:alpine
+    extra_hosts:
+      <<: *hosts-env
+    networks:
+      - crawlnet
+    restart: always
+
+networks:
+  crawlnet:
+    driver: bridge
