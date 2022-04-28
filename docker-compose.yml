@@ -20,8 +20,9 @@ services:
       - crawlnet
   front:
     build: docker/front
-    # volumes:
-    #   - "./:/"
+    volumes:
+      - "./src/front/:/opt/app/:rw"
+      - "./docker/front/entrypoint.sh:/tmp/entrypoint.sh"
     extra_hosts:
       <<: *hosts-env
     networks:
