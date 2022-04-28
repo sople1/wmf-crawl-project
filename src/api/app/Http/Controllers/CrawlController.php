@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Laravel\Lumen\Routing\Controller as BaseController;
+use Laravel\Lumen\Routing\Controller as BaseController; 
 use App\Libraries\Crawler;
 use Illuminate\Http\Request;
 
@@ -23,6 +23,7 @@ class CrawlController extends BaseController
 
         return json_encode([
             'url' => $url,
+            'type' => $type,
             'body' => $crawler->get_processed_body($type),
             'counted' => $crawler->get_sorted_bodystring($type)
         ]);
