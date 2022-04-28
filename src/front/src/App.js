@@ -1,42 +1,47 @@
+import axios from 'axios';
+import React, { useState } from 'react';
+
+import FormApp from './FormApp';
+import ResultApp from './ResultApp';
 import './App.css';
 
-function App() {
+
+function App(props) {
+
+  const [state, setState] = useState({
+    url: '',
+    type: 0,
+    grouping: 5,
+    chars: []
+  });
+
+  const form_func = {
+    update_value: (e) => {
+      form_func.change_state(e.target.name, e.target.value);
+    },
+    make_result: () => {
+      axios.get(`/api/crawl?url=${state.url}&type=${state.type}`)
+        .then((result) => {
+          let data = result.data;
+          form_func.change_state('chars', data.counted);
+        })
+        .catch((e) => { 
+          console.log(e);
+          alert('오류 발생');
+          form_func.change_state('chars', []);
+        });
+    },
+    change_state: (name, value) => {
+      let new_state = { ...state };
+      new_state[name] = value;
+      setState(new_state);
+    }
+  };
+
   return (
     <div className="App">
-      <form name="crawl-form" className="crawl-form">
-        <ul className="list-unstyled" id="crawl-form-body">
-          <li>
-            <label for="url">URL</label>
-            <input type="text" name="url" id="url" />
-          </li>
-          <li>
-            <label for="type">Type</label>
-            <select name="type" id="type">
-              <option value="0">HTML 태그제외</option>
-              <option value="1">Text 전체</option>
-            </select>
-          </li> 
-          <li>
-            <label for="grouping">출력묶음단위(자연수)</label>
-            <input type="text" name="grouping" id="grouping" />
-          </li>
-        </ul>
-        <button type="submit">출력</button>
-      </form>
-      <ul className="list-unstyled" id="result">
-        <li>
-          <dl id="result-grouping">
-            <dt>몫</dt>
-            <dd></dd>
-          </dl>
-        </li>
-        <li>
-          <dl id="result-remain">
-            <dt>나머지</dt>
-            <dd></dd>
-          </dl>
-        </li>
-      </ul>
+      <FormApp func={form_func} {...state} />
+      <ResultApp chars={state.chars} grouping={state.grouping} />
     </div>
   );
 }
